@@ -61,6 +61,11 @@ class RAGService:
             for c in contexts
         ]
         yield {"event": "citations", "data": json.dumps([c.model_dump() for c in citations])}
-        async for token in self._generator.stream(question, contexts):
-            yield {"event": "token", "data": token}
+        # Surface a mid-stream failure as an SSE error event rather than a dropped connection.
+        try:
+            async for token in self._generator.stream(question, contexts):
+                yield {"event": "token", "data": token}
+        except Exception as exc:
+            yield {"event": "error", "data": json.dumps({"message": str(exc)})}
+            return
         yield {"event": "done", "data": "[DONE]"}
