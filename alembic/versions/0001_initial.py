@@ -5,19 +5,16 @@ Revises:
 Create Date: 2026-01-01
 """
 
-import os
-
 import pgvector.sqlalchemy
 import sqlalchemy as sa
 
 from alembic import op
+from app.config import EMBED_DIM  # single source of truth, shared with the ORM model
 
 revision = "0001"
 down_revision = None
 branch_labels = None
 depends_on = None
-
-EMBED_DIM = int(os.environ.get("EMBED_DIM", "1536"))
 
 
 def upgrade() -> None:
