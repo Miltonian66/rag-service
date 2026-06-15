@@ -7,7 +7,6 @@ Create Date: 2026-01-01
 
 import pgvector.sqlalchemy
 import sqlalchemy as sa
-
 from alembic import op
 from app.config import EMBED_DIM  # single source of truth, shared with the ORM model
 
