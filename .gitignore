@@ -16,3 +16,4 @@ venv/
 # Build artifacts
 dist/
 build/
+eval-report.json

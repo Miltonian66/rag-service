@@ -18,7 +18,7 @@ class Settings(BaseSettings):
     database_url: str = "postgresql+asyncpg://rag:rag@localhost:5432/rag"
 
     # Provider selection
-    embedding_provider: Literal["openai", "fake"] = "openai"
+    embedding_provider: Literal["openai", "lexical", "fake"] = "openai"
     llm_provider: Literal["claude", "openai", "fake"] = "claude"
 
     # Keys (read from env; never hardcode)
@@ -29,12 +29,19 @@ class Settings(BaseSettings):
     embed_model: str = "text-embedding-3-small"
     embed_dim: int = 1536
     llm_model: str = "claude-opus-4-8"
+    # Judge for the agentic pipeline (relevance grading + query rewriting).
+    # Many small calls: low effort by default; a cheaper model is a one-line change.
+    judge_model: str = "claude-opus-5-5"
+    judge_effort: Literal["low", "medium", "high"] = "low"
 
     # Retrieval / generation
     chunk_size: int = 1000
     chunk_overlap: int = 200
     top_k: int = 5
     max_tokens: int = 1024
+    # Agentic pipeline: how many times the query may be rewritten when no
+    # retrieved passage is graded relevant.
+    max_rewrites: int = 1
 
 
 @lru_cache

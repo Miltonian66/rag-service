@@ -3,10 +3,12 @@ from app.config import Settings
 from app.dependencies import (
     get_embedder,
     get_generator,
+    get_judge,
     get_settings,
     get_vector_store,
 )
 from app.embeddings import FakeEmbedder
+from app.judge import FakeJudge
 from app.llm import FakeGenerator
 from app.main import app
 from app.vectorstore import InMemoryVectorStore
@@ -38,6 +40,7 @@ def client(test_settings, shared_store) -> AsyncClient:
     app.dependency_overrides[get_settings] = lambda: test_settings
     app.dependency_overrides[get_embedder] = lambda: FakeEmbedder(dim=test_settings.embed_dim)
     app.dependency_overrides[get_generator] = lambda: FakeGenerator()
+    app.dependency_overrides[get_judge] = lambda: FakeJudge()
     app.dependency_overrides[get_vector_store] = lambda: shared_store
 
     transport = ASGITransport(app=app)

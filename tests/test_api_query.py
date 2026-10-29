@@ -39,3 +39,25 @@ async def test_query_stream_sse(client):
     assert "event: citations" in text
     assert "event: token" in text
     assert "[DONE]" in text
+
+
+async def test_query_agentic_mode_returns_steps(client):
+    async with client as c:
+        await c.post(
+            "/documents",
+            json={"source": "kb", "text": "RAG combines retrieval and generation. " * 10},
+        )
+        resp = await c.post(
+            "/query", json={"question": "What is RAG retrieval?", "mode": "agentic"}
+        )
+    assert resp.status_code == 200
+    body = resp.json()
+    assert body["steps"][0].startswith("retrieve")
+    assert body["unsupported_citations"] == []
+    assert body["citations"][0]["source"] == "kb"
+
+
+async def test_query_agentic_stream_rejected(client):
+    async with client as c:
+        resp = await c.post("/query", json={"question": "q?", "mode": "agentic", "stream": True})
+    assert resp.status_code == 422

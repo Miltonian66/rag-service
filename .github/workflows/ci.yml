@@ -20,7 +20,7 @@ jobs:
         run: uv python install 3.11
 
       - name: Install dependencies
-        run: uv sync --frozen --extra dev
+        run: uv sync --frozen --extra dev --extra observability
 
       - name: Ruff lint
         run: uv run ruff check .
@@ -34,3 +34,13 @@ jobs:
           LLM_PROVIDER: fake
           EMBED_DIM: "1536"
         run: uv run pytest
+
+      - name: Eval regression gate (offline)
+        run: uv run python -m evals.run --check evals/thresholds.json --out eval-report.json
+
+      - name: Upload eval report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-report
+          path: eval-report.json

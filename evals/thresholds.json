@@ -1,0 +1,9 @@
+{
+  "simple.hit_rate": {"min": 0.95},
+  "simple.mrr": {"min": 0.8},
+  "agentic.hit_rate": {"min": 0.9},
+  "agentic.context_precision": {"min": 0.8},
+  "agentic.abstention_rate": {"min": 0.25},
+  "agentic.wrong_abstention_rate": {"max": 0.05},
+  "agentic.unsupported_citations": {"max": 0}
+}
