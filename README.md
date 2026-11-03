@@ -17,7 +17,7 @@ and no API keys**.
 
 - **Async end-to-end** — FastAPI + async SQLAlchemy 2.0 + asyncpg, no blocking calls in request paths.
 - **pgvector cosine retrieval** — top-k nearest neighbours via the `<=>` operator with an `ivfflat` index.
-- **Grounded generation with citations** — Claude Opus 4.8 answers strictly from retrieved passages and cites `[source#chunk_index]`.
+- **Grounded generation with citations** — Claude Opus 5.5 answers strictly from retrieved passages and cites `[source#chunk_index]`; effort is configurable and a safety-classifier refusal surfaces as an error, never as an empty answer.
 - **SSE streaming** — `/query?stream=true` streams a `citations` event followed by incremental `token` events.
 - **Provider abstractions (Real + Fake)** — `Embedder`, `Generator`, `VectorStore`. Tests swap in `FakeEmbedder` / `FakeGenerator` / `InMemoryVectorStore` via FastAPI `dependency_overrides`, giving a fully offline, network-free, Postgres-free CI.
 - **Agentic mode on LangGraph** — `mode: "agentic"` runs retrieve → grade → (rewrite → retrieve) → generate → verify. Claude grades each passage and rewrites the query; routing, the rewrite budget and citation checks are plain code. Every answer carries the `steps` it took.
@@ -106,7 +106,7 @@ When `stream=true`, `/query` returns `text/event-stream`: one `citations` event
 - **OpenAI for embeddings while Claude generates.** Anthropic does not ship a
   first-class embeddings API, so embeddings come from OpenAI's
   `text-embedding-3-small` (1536 dims) — a deliberate split, not an oversight.
-  Generation uses Claude (`claude-opus-4-8`).
+  Generation uses Claude (`claude-opus-5-5`, `LLM_EFFORT=low` by default).
 - **Chunk size 1000 / overlap 200.** A pragmatic balance: chunks large enough to
   carry self-contained context, with 20% overlap so answers that straddle a
   boundary still retrieve cleanly. Both are configurable via env.

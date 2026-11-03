@@ -28,7 +28,9 @@ class Settings(BaseSettings):
     # Models
     embed_model: str = "text-embedding-3-small"
     embed_dim: int = 1536
-    llm_model: str = "claude-opus-4-8"
+    llm_model: str = "claude-opus-5-5"
+    # Thinking is always on for current Opus models; effort is the latency/cost lever.
+    llm_effort: Literal["low", "medium", "high"] = "low"
     # Judge for the agentic pipeline (relevance grading + query rewriting).
     # Many small calls: low effort by default; a cheaper model is a one-line change.
     judge_model: str = "claude-opus-5-5"
@@ -38,7 +40,8 @@ class Settings(BaseSettings):
     chunk_size: int = 1000
     chunk_overlap: int = 200
     top_k: int = 5
-    max_tokens: int = 1024
+    # Caps thinking + answer together, so leave room above the answer itself.
+    max_tokens: int = 4096
     # Agentic pipeline: how many times the query may be rewritten when no
     # retrieved passage is graded relevant.
     max_rewrites: int = 1
