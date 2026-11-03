@@ -6,8 +6,11 @@ Claude integration follows the official Anthropic Python SDK:
     is a list of blocks — join the ``.text`` of blocks whose ``.type == "text"``.
   - Streaming: ``async with client.messages.stream(...) as stream: async for text
     in stream.text_stream: yield text``.
-  - Model defaults to ``claude-opus-4-8`` (no date suffix). On Opus 4.8 the
-    ``temperature``/``top_p`` and ``budget_tokens`` params are NOT used (they 400).
+  - Model defaults to ``claude-opus-5-5`` (no date suffix). Thinking is always on
+    and ``output_config.effort`` controls how much; ``temperature``/``top_p``,
+    ``budget_tokens`` and ``thinking.type="disabled"`` are NOT sent (they 400).
+  - A safety-classifier decline is a normal response with ``stop_reason ==
+    "refusal"``; it is surfaced as an error rather than an empty answer.
 """
 
 from __future__ import annotations
@@ -50,7 +53,7 @@ class Generator(Protocol):
 
 
 class ClaudeGenerator:
-    """Anthropic Claude generator (default model: claude-opus-4-8)."""
+    """Anthropic Claude generator (default model: claude-opus-5-5)."""
 
     name = "claude"
 
@@ -61,6 +64,7 @@ class ClaudeGenerator:
         self._client = AsyncAnthropic(api_key=key.get_secret_value()) if key else AsyncAnthropic()
         self._model = settings.llm_model
         self._max_tokens = settings.max_tokens
+        self._effort = settings.llm_effort
 
     async def generate(self, question: str, contexts: list[SearchResult]) -> str:
         prompt = _build_prompt(question, contexts)
@@ -70,9 +74,12 @@ class ClaudeGenerator:
                 max_tokens=self._max_tokens,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": prompt}],
+                output_config={"effort": self._effort},
             )
         except (anthropic.APIError, anthropic.RateLimitError) as exc:  # surfaced to API layer
             raise RuntimeError(f"Claude generation failed: {exc}") from exc
+        if resp.stop_reason == "refusal":
+            raise RuntimeError("Claude declined to answer (stop_reason=refusal)")
         # content is a list of blocks; concatenate the text-type blocks.
         return "".join(b.text for b in resp.content if b.type == "text")
 
@@ -86,11 +93,15 @@ class ClaudeGenerator:
                 max_tokens=self._max_tokens,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": prompt}],
+                output_config={"effort": self._effort},
             ) as stream:
                 async for text in stream.text_stream:
                     yield text
+                final = await stream.get_final_message()
         except (anthropic.APIError, anthropic.RateLimitError) as exc:
             raise RuntimeError(f"Claude streaming failed: {exc}") from exc
+        if final.stop_reason == "refusal":
+            raise RuntimeError("Claude declined to answer (stop_reason=refusal)")
 
 
 class OpenAIGenerator:

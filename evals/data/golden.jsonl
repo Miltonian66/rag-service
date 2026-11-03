@@ -1,0 +1,27 @@
+{"id": "refund-window", "question": "How many days do I have to get a full refund on a robot arm?", "sources": ["refunds"], "must_include": ["30 days"]}
+{"id": "refund-late", "question": "What happens if I return hardware after 30 days?", "sources": ["refunds"], "must_include": ["store credit", "15 percent"]}
+{"id": "refund-monthly", "question": "Do monthly subscriptions get refunded when cancelled?", "sources": ["refunds"], "must_include": ["not refunded"]}
+{"id": "refund-speed", "question": "How quickly is the money returned after a refund is approved?", "sources": ["refunds"], "must_include": ["5 business days"]}
+{"id": "warranty-length", "question": "How long is the standard warranty on grippers?", "sources": ["warranty"], "must_include": ["two-year"]}
+{"id": "warranty-exclusions", "question": "Does the warranty cover damage from a collision?", "sources": ["warranty"], "must_include": ["does not cover"]}
+{"id": "warranty-enterprise", "question": "What warranty do Enterprise customers get?", "sources": ["warranty", "pricing"], "must_include": ["five years"]}
+{"id": "warranty-claim", "question": "What do I need to send to open a warranty claim?", "sources": ["warranty"], "must_include": ["serial number", "video"]}
+{"id": "ship-cutoff", "question": "Until what time can I order for same-day shipping?", "sources": ["shipping"], "must_include": ["14:00"]}
+{"id": "ship-free", "question": "When is standard EU delivery free?", "sources": ["shipping"], "must_include": ["500 euros"]}
+{"id": "ship-express", "question": "How much does express delivery cost?", "sources": ["shipping"], "must_include": ["49 euros"]}
+{"id": "ship-uk", "question": "Who pays import duties for deliveries to the United Kingdom?", "sources": ["shipping"], "must_include": ["recipient"]}
+{"id": "api-pro-limit", "question": "What is the Fleet API rate limit on the Pro plan?", "sources": ["api-limits"], "must_include": ["600 requests per minute"]}
+{"id": "api-429", "question": "What does the API return when I exceed the rate limit?", "sources": ["api-limits"], "must_include": ["429", "Retry-After"]}
+{"id": "api-streams", "question": "How many telemetry streams can a project keep open?", "sources": ["api-limits"], "must_include": ["50"]}
+{"id": "sec-2fa", "question": "Can I use SMS codes for two-factor authentication?", "sources": ["security"], "must_include": ["not accepted"]}
+{"id": "sec-token-expiry", "question": "When do project tokens expire?", "sources": ["security"], "must_include": ["90 days"]}
+{"id": "sec-audit", "question": "How long are audit logs retained?", "sources": ["security"], "must_include": ["one year"]}
+{"id": "price-pro", "question": "How much does the Pro plan cost per robot?", "sources": ["pricing"], "must_include": ["79 euros"]}
+{"id": "price-annual", "question": "Is there a discount for paying yearly?", "sources": ["pricing"], "must_include": ["20 percent"]}
+{"id": "price-edu", "question": "Do universities get a discount?", "sources": ["pricing"], "must_include": ["50 percent"]}
+{"id": "onb-connect", "question": "How do I add a new robot to my fleet?", "sources": ["onboarding"], "must_include": ["QR code"]}
+{"id": "onb-calibration", "question": "How long does calibration take?", "sources": ["onboarding"], "must_include": ["8 minutes"]}
+{"id": "none-ceo", "question": "Who is the CEO of Northwind Robotics?", "sources": [], "must_include": []}
+{"id": "none-mars", "question": "Do you ship robots to Mars colonies?", "sources": [], "must_include": []}
+{"id": "none-python", "question": "Which Python version does the firmware use?", "sources": [], "must_include": []}
+{"id": "none-paint", "question": "What paint colours are available for the arm?", "sources": [], "must_include": []}

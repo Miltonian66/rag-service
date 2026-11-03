@@ -27,7 +27,7 @@ services:
       LLM_PROVIDER: claude
       OPENAI_API_KEY: ${OPENAI_API_KEY}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY}
-      LLM_MODEL: claude-opus-4-8
+      LLM_MODEL: claude-opus-5-5
     ports:
       - "8000:8000"
     command: >

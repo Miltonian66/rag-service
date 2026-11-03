@@ -10,6 +10,7 @@ from __future__ import annotations
 
 import hashlib
 import math
+import re
 from typing import Protocol, runtime_checkable
 
 from openai import AsyncOpenAI
@@ -76,6 +77,43 @@ class FakeEmbedder:
                 if len(values) == self.dim:
                     break
             counter += 1
+        norm = math.sqrt(sum(v * v for v in values)) or 1.0
+        return [v / norm for v in values]
+
+    async def embed(self, texts: list[str]) -> list[list[float]]:
+        return [self._vector(t) for t in texts]
+
+    async def embed_query(self, text: str) -> list[float]:
+        return self._vector(text)
+
+
+_TOKEN = re.compile(r"[a-z0-9]+")
+
+
+class LexicalEmbedder:
+    """Deterministic bag-of-words embedder (feature hashing) for offline evals.
+
+    Unlike :class:`FakeEmbedder`, texts that share words get similar vectors, so
+    retrieval quality can be measured offline. Each lowercase token (plus each
+    adjacent token pair) is hashed into one of ``dim`` buckets with a signed
+    weight; the vector is L2-normalised.
+    """
+
+    name = "lexical"
+
+    def __init__(self, dim: int = 1536) -> None:
+        self.dim = dim
+
+    def _features(self, text: str) -> list[str]:
+        tokens = _TOKEN.findall(text.lower())
+        return tokens + [f"{a} {b}" for a, b in zip(tokens, tokens[1:], strict=False)]
+
+    def _vector(self, text: str) -> list[float]:
+        values = [0.0] * self.dim
+        for feature in self._features(text):
+            digest = hashlib.blake2b(feature.encode(), digest_size=8).digest()
+            bucket = int.from_bytes(digest[:4], "big") % self.dim
+            values[bucket] += 1.0 if digest[4] & 1 else -1.0
         norm = math.sqrt(sum(v * v for v in values)) or 1.0
         return [v / norm for v in values]
 
